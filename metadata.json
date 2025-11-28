@@ -1,0 +1,5 @@
+{
+  "name": "ListaFácil - Your Smart Shopping List",
+  "description": "A smart shopping list application that helps you organize your purchases. It uses AI to suggest item categories, making list creation faster and more intuitive. Manage multiple lists, track your shopping progress, and enjoy a seamless experience from planning to checkout.",
+  "requestFramePermissions": []
+}
