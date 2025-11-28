@@ -10,7 +10,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onCreateNew }) => {
         <div className="flex flex-col px-4 py-16 flex-1 justify-center items-center">
             <div className="flex flex-col items-center gap-6">
                 <div className="w-full max-w-[320px]">
-                    <img src="https://illustrations.popsy.co/emerald/shopping-cart.svg" alt="Illustration of an empty shopping cart" className="w-full h-auto" />
+                    <img src="https://illustrations.popsy.co/emerald/shopping-cart.svg" alt="Ilustração de um carrinho de compras vazio" className="w-full h-auto" />
                 </div>
                 <div className="flex max-w-[480px] flex-col items-center gap-2">
                     <p className="text-zinc-900 dark:text-zinc-100 text-lg font-bold leading-tight tracking-tight text-center">Você ainda não tem nenhuma lista.</p>

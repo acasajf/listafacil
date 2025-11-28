@@ -7,9 +7,10 @@ interface ListCardProps {
     onSelect: (listId: string) => void;
     onDelete: (listId: string) => void;
     onShop: (listId: string) => void;
+    onCompare: (listId: string) => void;
 }
 
-const ListCard: React.FC<ListCardProps> = ({ list, onSelect, onDelete, onShop }) => {
+const ListCard: React.FC<ListCardProps> = ({ list, onSelect, onDelete, onShop, onCompare }) => {
     const completedItems = list.items.filter(item => item.completed).length;
     const totalItems = list.items.length;
 
@@ -32,6 +33,11 @@ const ListCard: React.FC<ListCardProps> = ({ list, onSelect, onDelete, onShop })
         onShop(list.id);
     };
 
+    const handleCompare = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onCompare(list.id);
+    };
+
     return (
         <div onClick={() => onSelect(list.id)} className="flex flex-col gap-3 rounded-xl bg-zinc-100/50 dark:bg-zinc-900/50 p-4 transition-all hover:shadow-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer group">
             <div className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg" style={{ backgroundImage: `url(${list.imageUrl})` }}></div>
@@ -41,6 +47,9 @@ const ListCard: React.FC<ListCardProps> = ({ list, onSelect, onDelete, onShop })
                     <p className="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal">{subtext}</p>
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={handleCompare} className="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400" title="Comparar Preços">
+                        <span className="material-symbols-outlined text-lg">price_check</span>
+                    </button>
                     <button onClick={handleShop} className="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400" title="Modo Compras">
                         <span className="material-symbols-outlined text-lg">shopping_cart</span>
                     </button>
