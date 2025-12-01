@@ -16,6 +16,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onAddItem,
     const [quantity, setQuantity] = useState(1);
     const [unit, setUnit] = useState('un');
     const [notes, setNotes] = useState('');
+    const [market, setMarket] = useState('');
     const [category, setCategory] = useState('Outros');
     const { suggested, loadingSuggestions, fetchSuggestions, setSuggested } = useCategorySuggestions();
     const [showToast, setShowToast] = useState(false);
@@ -27,6 +28,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onAddItem,
             setQuantity(itemToEdit.quantity);
             setUnit(itemToEdit.unit);
             setNotes(itemToEdit.notes || '');
+            setMarket(itemToEdit.market || '');
             setCategory(itemToEdit.category);
         } else {
             // Reset form for new item
@@ -34,6 +36,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onAddItem,
             setQuantity(1);
             setUnit('un');
             setNotes('');
+            setMarket('');
             setCategory('Outros');
             setSuggested([]);
         }
@@ -59,7 +62,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onAddItem,
         e.preventDefault();
         if (!name.trim()) return;
 
-        const newItem = { name, quantity, unit, notes, category };
+        const newItem = { name, quantity, unit, notes, market, category };
         onAddItem(newItem);
         setToastMessage(`${name} (${quantity} ${unit}) ${itemToEdit ? 'atualizado' : 'adicionado'} à sua lista.`);
         setShowToast(true);
@@ -129,6 +132,10 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onAddItem,
                                 </select>
                             </div>
                         </div>
+                        <label className="flex flex-col">
+                            <p className="text-slate-900 dark:text-slate-100 text-base font-medium pb-2">Local / Mercado (opcional)</p>
+                            <input value={market} onChange={e => setMarket(e.target.value)} className="form-input rounded-xl h-14" placeholder="Ex: Supermercado X" />
+                        </label>
                         <label className="flex flex-col">
                             <p className="text-slate-900 dark:text-slate-100 text-base font-medium pb-2">Notas (opcional)</p>
                             <textarea value={notes} onChange={e => setNotes(e.target.value)} className="form-textarea rounded-xl min-h-28" placeholder="Ex: Marca específica ou detalhe"></textarea>

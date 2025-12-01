@@ -21,7 +21,9 @@ const ListItemRow: React.FC<ListItemRowProps> = ({ item, onToggle, onEdit, onDel
                 />
                 <div className={`flex flex-col ${item.completed ? 'opacity-60' : ''}`}>
                     <p className={`text-slate-800 dark:text-slate-200 font-medium ${item.completed ? 'line-through text-slate-500 dark:text-slate-400' : ''}`}>{item.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{item.quantity} {item.unit} {item.category !== 'Outros' && `• ${item.category}`}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {item.quantity} {item.unit} {item.category !== 'Outros' && `• ${item.category}`} {item.market && `• ${item.market}`}
+                    </p>
                 </div>
             </div>
             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

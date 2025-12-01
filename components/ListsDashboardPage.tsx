@@ -3,6 +3,7 @@ import type { ShoppingList } from '../types'
 import { SortOption, SortDirection } from '../types'
 import ListCard from './ListCard'
 import EmptyState from './EmptyState'
+import { useAuth } from '../contexts/AuthContext'
 
 interface ListsDashboardPageProps {
   lists: ShoppingList[]
@@ -23,6 +24,7 @@ const ListsDashboardPage: React.FC<ListsDashboardPageProps> = ({
   onStartShopping,
   onComparePrices,
 }) => {
+  const { signOut } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
   const [sortOption, setSortOption] = useState<SortOption>(
     SortOption.CreationDate
@@ -103,11 +105,13 @@ const ListsDashboardPage: React.FC<ListsDashboardPageProps> = ({
               </div>
             </label>
             <div
-              className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+              className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 cursor-pointer"
               style={{
                 backgroundImage:
                   'url("https://lh3.googleusercontent.com/aida-public/AB6AXuArnVqOciSLE7uGO7tM4XOaGLMylI1pWdbOfSYLSfqyJZoPfTPAYKQM0NBewMZD9a6KRz0ynAATC9qIZadvCdvNhHqaHD3KJKBByj1dcx9Z2_Rjc3Y-3IsK_97CssBFq2GPPRH9Gxf2WCxVW9iqBbeiFRACsWxLea0CkxSTOnS8JjVjv5tG3IYiSwMJ9aKNY6XRbrNuT-HTOUXK84mgq7Dw6WWJ1xc2LLV-fUCZ0V8KreXuZf09IIoSWeLHc_-lvNLlghgTg6xuW-n1")',
               }}
+              onClick={() => signOut()}
+              title="Sair"
             ></div>
           </div>
         </div>

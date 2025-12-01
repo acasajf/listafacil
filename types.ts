@@ -5,6 +5,7 @@ export interface ListItem {
   unit: string
   category: string
   notes?: string
+  market?: string
   image?: string
   completed: boolean
 }

@@ -10,8 +10,10 @@ import ComparisonPage from './components/ComparisonPage'
 
 import { initialLists } from './data/mockData'
 
+import { useAuth } from './contexts/AuthContext';
+
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn', false)
+  const { user, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState<Page>(Page.Login)
   const [lists, setLists] = useLocalStorage<ShoppingList[]>('shoppingLists', [])
   const [activeListId, setActiveListId] = useState<string | null>(null)
@@ -23,13 +25,14 @@ const App: React.FC = () => {
   }, [lists.length, setLists])
 
   useEffect(() => {
-    setCurrentPage(isLoggedIn ? Page.ListsDashboard : Page.Login)
-  }, [isLoggedIn])
+    if (!loading) {
+      setCurrentPage(user ? Page.ListsDashboard : Page.Login)
+    }
+  }, [user, loading])
 
   const handleLogin = useCallback(() => {
-    setIsLoggedIn(true)
-    setCurrentPage(Page.ListsDashboard)
-  }, [setIsLoggedIn])
+    // Auth state is handled by AuthContext
+  }, [])
 
   const handleCreateNewList = useCallback(() => {
     const newListId = `list-${Date.now()}`
@@ -144,6 +147,10 @@ const App: React.FC = () => {
       default:
         return <LoginPage onLogin={handleLogin} />
     }
+  }
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   }
 
   return <div className="min-h-screen">{renderPage()}</div>
