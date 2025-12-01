@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { supabase } from '../services/supabase';
 
 interface LoginPageProps {
     onLogin: () => void;
@@ -7,7 +8,39 @@ interface LoginPageProps {
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     const [authMode, setAuthMode] = useState<'Entrar' | 'Criar Conta'>('Entrar');
-    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        try {
+            if (authMode === 'Entrar') {
+                const { error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+                if (error) throw error;
+                onLogin();
+            } else {
+                const { error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                });
+                if (error) throw error;
+                alert('Verifique seu e-mail para confirmar o cadastro!');
+            }
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="flex h-full min-h-screen">
             <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-background-light dark:bg-background-dark p-12">
@@ -40,17 +73,38 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                             </label>
                         </div>
                     </div>
-                    <form className="flex flex-col gap-4" onSubmit={(e) => { e.preventDefault(); onLogin(); }}>
+                    {error && <div className="text-red-500 text-sm">{error}</div>}
+                    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                         <label className="flex flex-col w-full">
                             <p className="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">E-mail</p>
-                            <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-subtle-light dark:placeholder:text-subtle-dark p-[15px] text-base font-normal leading-normal" placeholder="seuemail@exemplo.com" type="email" />
+                            <input
+                                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-subtle-light dark:placeholder:text-subtle-dark p-[15px] text-base font-normal leading-normal"
+                                placeholder="seuemail@exemplo.com"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
                         </label>
                         <label className="flex flex-col w-full">
                             <p className="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">Senha</p>
-                            <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-subtle-light dark:placeholder:text-subtle-dark p-[15px] text-base font-normal leading-normal" placeholder="Sua senha" type="password" />
+                            <input
+                                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-subtle-light dark:placeholder:text-subtle-dark p-[15px] text-base font-normal leading-normal"
+                                placeholder="Sua senha"
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
                         </label>
                         <a className="text-sm font-medium text-primary hover:underline text-right" href="#">Esqueci minha senha</a>
-                        <button className="flex items-center justify-center h-12 px-6 py-3 bg-primary text-black dark:text-black text-base font-bold rounded-lg w-full transition-colors hover:bg-primary/90" type="submit">{authMode}</button>
+                        <button
+                            className="flex items-center justify-center h-12 px-6 py-3 bg-primary text-black dark:text-black text-base font-bold rounded-lg w-full transition-colors hover:bg-primary/90 disabled:opacity-50"
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading ? 'Carregando...' : authMode}
+                        </button>
                     </form>
                     <div className="flex items-center gap-4">
                         <hr className="flex-grow border-border-light dark:border-border-dark" />
@@ -58,7 +112,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                         <hr className="flex-grow border-border-light dark:border-border-dark" />
                     </div>
                     <div className="flex flex-col gap-4">
-                        <button onClick={onLogin} className="flex items-center justify-center gap-2 h-12 px-6 py-3 border border-border-light dark:border-border-dark bg-transparent text-text-light dark:text-text-dark text-base font-medium rounded-lg w-full transition-colors hover:bg-black/5 dark:hover:bg-white/5">
+                        <button type="button" className="flex items-center justify-center gap-2 h-12 px-6 py-3 border border-border-light dark:border-border-dark bg-transparent text-text-light dark:text-text-dark text-base font-medium rounded-lg w-full transition-colors hover:bg-black/5 dark:hover:bg-white/5">
                             <svg aria-hidden="true" className="w-5 h-5" role="img" viewBox="0 0 48 48">
                                 <path d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l8.35 6.52C12.91 13.46 18.06 9.5 24 9.5z" fill="#4285F4"></path>
                                 <path d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6.02C43.51 39.99 46.98 32.95 46.98 24.55z" fill="#34A853"></path>
@@ -68,7 +122,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                             </svg>
                             Continuar com Google
                         </button>
-                        <button onClick={onLogin} className="flex items-center justify-center gap-2 h-12 px-6 py-3 border border-border-light dark:border-border-dark bg-transparent text-text-light dark:text-text-dark text-base font-medium rounded-lg w-full transition-colors hover:bg-black/5 dark:hover:bg-white/5">
+                        <button type="button" className="flex items-center justify-center gap-2 h-12 px-6 py-3 border border-border-light dark:border-border-dark bg-transparent text-text-light dark:text-text-dark text-base font-medium rounded-lg w-full transition-colors hover:bg-black/5 dark:hover:bg-white/5">
                             <svg aria-hidden="true" className="w-5 h-5" role="img" viewBox="0 0 24 24">
                                 <path d="M17.22,3.35a5.53,5.53,0,0,0-4.48,2.23,5.43,5.43,0,0,0-4.43-2.23C5.52,3.35,3,5.88,3,8.69A5.13,5.13,0,0,0,4,11.2,5.2,5.2,0,0,0,3,13.67c0,3,2.71,5,5.66,5A5.3,5.3,0,0,0,13,17.41a5.72,5.72,0,0,0,4.34,1.26c.21,0,.42,0,.62,0,2.62-.2,4-2,4.06-2a10.45,10.45,0,0,1-2.34-3.55,5.1,5.1,0,0,0,1.26-3.32C21,5.82,18.73,3.35,17.22,3.35Zm-1.2,12.37a3.17,3.17,0,0,1-3.21-3.18,3.13,3.13,0,0,1,3.19-3.15,3.08,3.08,0,0,1,3.18,3.15A3.13,3.13,0,0,1,16,15.72Zm-1.89-9.15a3,3,0,0,1,2.58-1.55,3.13,3.13,0,0,1,2.6,1.55,3.42,3.42,0,0,0-2.6-1.28A3.42,3.42,0,0,0,14.12,6.57Z" fill="currentColor"></path>
                             </svg>
